@@ -4,7 +4,13 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.kagkarlsson/db-scheduler/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.kagkarlsson/db-scheduler)
 [![License](http://img.shields.io/:license-apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
-Task-scheduler for Java that was inspired by the need for a clustered `java.util.concurrent.ScheduledExecutorService` simpler than Quartz.
+Task-scheduler for Java that was inspired by the need for a clustered `java.util.concurrent.ScheduledExecutorService` simpler than Quartz. 
+
+As such, also appreciated by users ([link](https://github.com/kagkarlsson/db-scheduler/issues/115#issuecomment-649601944)): 
+
+> Your lib rocks! I'm so glad I got rid of Quartz and replaced it by yours which is way easier to handle!
+>
+> [cbarbosa2](https://github.com/cbarbosa2) 
 
 See also [why not Quartz?](#why-db-scheduler-when-there-is-quartz)
 
@@ -23,7 +29,7 @@ See also [why not Quartz?](#why-db-scheduler-when-there-is-quartz)
 <dependency>
     <groupId>com.github.kagkarlsson</groupId>
     <artifactId>db-scheduler</artifactId>
-    <version>6.8</version>
+    <version>7.2</version>
 </dependency>
 ```
 
@@ -48,6 +54,19 @@ scheduler.start();
 ```
 
 For more examples, continue reading. For details on the inner workings, see [How it works](#how-it-works). If you have a Spring Boot application, have a look at [Spring Boot Usage](#spring-boot-usage).
+
+## Who uses db-scheduler?
+
+List of organizations known to be running db-scheduler in production:
+
+| Company                                   | Description                                                  |
+|-------------------------------------------|--------------------------------------------------------------|
+| [Digipost](https://digipost.no)           | Provider of digital mailboxes in Norway                      |
+| [Vy Group](https://www.vy.no/en)          | One of the largest transport groups in the Nordic countries. |
+| [TransferWise](https://transferwise.com/) | A cheap, fast way to send money abroad.                      |
+| Becker Professional Education             |                                                              |
+
+Feel free to open a PR to add your organization to the list.
 
 ## Examples
 
@@ -140,6 +159,7 @@ The scheduler is created using the `Scheduler.create(...)` builder. The builder 
 | `.enableImmediateExecution()`  | false | If this is enabled, the scheduler will attempt to directly execute tasks that are scheduled to `now()`, or a time in the past. For this to work, the call to `schedule(..)` must not occur from within a transaction, because the record will not yet be visible to the scheduler (if this is a requirement, see the method `scheduler.triggerCheckForDueExecutions()`) |
 | `.executorService(ExecutorService)`  | `null`  | If specified, use this externally managed executor service to run executions. Ideally the number of threads it will use should still be supplied (for scheduler polling optimizations). |
 | `.deleteUnresolvedAfter(Duration)`  | `14d`  | The time after which executions with unknown tasks are automatically deleted. These can typically be old recurring tasks that are not in use anymore. This is non-zero to prevent accidental removal of tasks through a configuration error (missing known-tasks) and problems during rolling upgrades. |
+| `.jdbcCustomization(JdbcCustomization)`  | auto  | db-scheduler tries to auto-detect the database used to see if any jdbc-interactions need to be customized. This method is an escape-hatch to allow for setting `JdbcCustomizations` explicitly. |
 
 
 
@@ -191,7 +211,7 @@ For Spring Boot applications, there is a starter `db-scheduler-spring-boot-start
     <dependency>
         <groupId>com.github.kagkarlsson</groupId>
         <artifactId>db-scheduler-spring-boot-starter</artifactId>
-        <version>6.8</version>
+        <version>7.2</version>
     </dependency>
     ```
    **NOTE**: This includes the db-scheduler dependency itself.
@@ -266,6 +286,18 @@ When a dead execution is found, the `Task`is consulted to see what should be don
 
 
 ## Versions / upgrading
+
+### Version 7.2
+* PR [#110](https://github.com/kagkarlsson/db-scheduler/pull/110) adds micrometer metrics support. Activated by setting `.statsRegistry(new MicrometerStatsRegistry(...))` on the builder. If you are using the Spring boot starter, the micrometer metrics will be added if you have micrometer on the classpath. 
+Contributions by [evenh](https://github.com/evenh).
+
+### Version 7.1
+* PR [#109](https://github.com/kagkarlsson/db-scheduler/pull/109) fixes db-scheduler for data sources returning connections where `autoCommit=false`. db-scheduler will now issue an explicit `commit` for these cases.
+
+### Version 7.0
+* PR [#105](https://github.com/kagkarlsson/db-scheduler/pull/105) fixes bug for `Microsoft Sql Server` where incorrect timezone handling caused persisted instant != read instant.
+  This bug was discovered when adding testcontainers-based compatibility tests and has strangely enough never been reported by users. So this release will cause a change
+  in behavior for users where the database is discovered to be `Microsoft SQL Server`.
 
 ### Version 6.8
 * PR [#96](https://github.com/kagkarlsson/db-scheduler/pull/96) allow for overriding `DbSchedulerStarter` in Spring Boot starter. Contributed by [evenh](https://github.com/evenh).

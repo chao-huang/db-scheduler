@@ -3,7 +3,7 @@
     <parent>
         <artifactId>examples</artifactId>
         <groupId>com.github.kagkarlsson</groupId>
-        <version>6.8-SNAPSHOT</version>
+        <version>master-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -22,6 +22,11 @@
             <artifactId>db-scheduler-spring-boot-starter</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>compile</scope>
+        </dependency>
 
         <!-- Spring Boot -->
         <dependency>
@@ -35,6 +40,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
 
         <!-- Swap for your own database -->

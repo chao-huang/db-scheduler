@@ -114,13 +114,13 @@ public class Scheduler implements SchedulerClient {
         schedulerState.setIsShuttingDown();
 
         LOG.info("Shutting down Scheduler.");
-        if (!ExecutorUtils.shutdownNowAndAwaitTermination(dueExecutor, Duration.ofSeconds(5))) {
+        if (!ExecutorUtils.shutdownAndAwaitTermination(dueExecutor, Duration.ofSeconds(5))) {
             LOG.warn("Failed to shutdown due-executor properly.");
         }
-        if (!ExecutorUtils.shutdownNowAndAwaitTermination(detectDeadExecutor, Duration.ofSeconds(5))) {
+        if (!ExecutorUtils.shutdownAndAwaitTermination(detectDeadExecutor, Duration.ofSeconds(5))) {
             LOG.warn("Failed to shutdown detect-dead-executor properly.");
         }
-        if (!ExecutorUtils.shutdownNowAndAwaitTermination(updateHeartbeatExecutor, Duration.ofSeconds(5))) {
+        if (!ExecutorUtils.shutdownAndAwaitTermination(updateHeartbeatExecutor, Duration.ofSeconds(5))) {
             LOG.warn("Failed to shutdown update-heartbeat-executor properly.");
         }
 
@@ -145,6 +145,11 @@ public class Scheduler implements SchedulerClient {
     @Override
     public void reschedule(TaskInstanceId taskInstanceId, Instant newExecutionTime) {
         this.delegate.reschedule(taskInstanceId, newExecutionTime);
+    }
+
+    @Override
+    public <T> void reschedule(TaskInstanceId taskInstanceId, Instant newExecutionTime, T newData) {
+        this.delegate.reschedule(taskInstanceId, newExecutionTime, newData);
     }
 
     @Override

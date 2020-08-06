@@ -3,7 +3,7 @@
     <parent>
         <artifactId>db-scheduler-parent</artifactId>
         <groupId>com.github.kagkarlsson</groupId>
-        <version>6.8-SNAPSHOT</version>
+        <version>master-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -64,6 +64,12 @@
             <optional>true</optional>
         </dependency>
 
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <!-- Validation -->
         <dependency>
             <groupId>javax.validation</groupId>
@@ -84,6 +90,11 @@
         </dependency>
 
         <!-- Test -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
